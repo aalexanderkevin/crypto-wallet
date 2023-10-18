@@ -17,7 +17,6 @@ import (
 )
 
 type Controllers struct {
-	handler.User
 	handler.Wallet
 	handler.Transaction
 	handler.Watcher
@@ -31,17 +30,13 @@ func StartgRPC(app *container.Container, cfg config.Config) {
 	}
 
 	// List of excluded methods (full method names).
-	excludedMethods := []string{
-		"/crypto_wallet.CryptoWallet/Login",    // Exclude Login method
-		"/crypto_wallet.CryptoWallet/Register", // Exclude Register method
-	}
+	excludedMethods := []string{}
 
 	server := grpc.NewServer(
 		grpc.UnaryInterceptor(middleware.JWTMiddleware(cfg.JwtSecret, excludedMethods)),
 	)
 
 	controllers := &Controllers{
-		User:        *handler.NewUserHandler(app),
 		Wallet:      *handler.NewWalletHandler(app),
 		Transaction: *handler.NewTransactionHandler(app),
 		Watcher:     *handler.NewWatcherHandler(app),

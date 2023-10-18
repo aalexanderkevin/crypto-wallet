@@ -1,13 +1,3 @@
-CREATE TABLE users (
-	id VARCHAR (255) PRIMARY KEY,
-	username VARCHAR (255) UNIQUE NOT NULL,
-	email VARCHAR (255) UNIQUE NOT NULL,
-	full_name VARCHAR (255) NOT NULL,
-	password VARCHAR(200) NOT NULL,
-	password_salt VARCHAR(200) NOT NULL,
-	created_at timestamp NULL DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE TABLE btc_transactions (
 	id VARCHAR(255) PRIMARY KEY,
 	sender_address TEXT [] NOT NULL,

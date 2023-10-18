@@ -108,9 +108,6 @@ func (defaultAppProvider) BuildContainer(ctx context.Context, options buildOptio
 		db = storage.GetPostgresDb()
 		appContainer.SetDb(db)
 
-		userRepo := gormrepo.NewUserRepository(db)
-		appContainer.SetUserRepo(userRepo)
-
 		walletRepo := gormrepo.NewWalletRepository(db)
 		appContainer.SetWalletRepo(walletRepo)
 

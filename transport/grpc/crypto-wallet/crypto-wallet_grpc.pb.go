@@ -20,8 +20,6 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	CryptoWallet_Register_FullMethodName       = "/crypto_wallet.CryptoWallet/Register"
-	CryptoWallet_Login_FullMethodName          = "/crypto_wallet.CryptoWallet/Login"
 	CryptoWallet_CreateWallet_FullMethodName   = "/crypto_wallet.CryptoWallet/CreateWallet"
 	CryptoWallet_SendToken_FullMethodName      = "/crypto_wallet.CryptoWallet/SendToken"
 	CryptoWallet_TriggerWatcher_FullMethodName = "/crypto_wallet.CryptoWallet/TriggerWatcher"
@@ -31,8 +29,6 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CryptoWalletClient interface {
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	CreateWallet(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*CreteWalletResponse, error)
 	SendToken(ctx context.Context, in *SendRequest, opts ...grpc.CallOption) (*SendResponse, error)
 	TriggerWatcher(ctx context.Context, in *TriggerWatcherRequest, opts ...grpc.CallOption) (*TriggerWatcherResponse, error)
@@ -44,24 +40,6 @@ type cryptoWalletClient struct {
 
 func NewCryptoWalletClient(cc grpc.ClientConnInterface) CryptoWalletClient {
 	return &cryptoWalletClient{cc}
-}
-
-func (c *cryptoWalletClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
-	out := new(RegisterResponse)
-	err := c.cc.Invoke(ctx, CryptoWallet_Register_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *cryptoWalletClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
-	out := new(LoginResponse)
-	err := c.cc.Invoke(ctx, CryptoWallet_Login_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *cryptoWalletClient) CreateWallet(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*CreteWalletResponse, error) {
@@ -95,8 +73,6 @@ func (c *cryptoWalletClient) TriggerWatcher(ctx context.Context, in *TriggerWatc
 // All implementations must embed UnimplementedCryptoWalletServer
 // for forward compatibility
 type CryptoWalletServer interface {
-	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
-	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	CreateWallet(context.Context, *emptypb.Empty) (*CreteWalletResponse, error)
 	SendToken(context.Context, *SendRequest) (*SendResponse, error)
 	TriggerWatcher(context.Context, *TriggerWatcherRequest) (*TriggerWatcherResponse, error)
@@ -107,12 +83,6 @@ type CryptoWalletServer interface {
 type UnimplementedCryptoWalletServer struct {
 }
 
-func (UnimplementedCryptoWalletServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
-}
-func (UnimplementedCryptoWalletServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
-}
 func (UnimplementedCryptoWalletServer) CreateWallet(context.Context, *emptypb.Empty) (*CreteWalletResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateWallet not implemented")
 }
@@ -133,42 +103,6 @@ type UnsafeCryptoWalletServer interface {
 
 func RegisterCryptoWalletServer(s grpc.ServiceRegistrar, srv CryptoWalletServer) {
 	s.RegisterService(&CryptoWallet_ServiceDesc, srv)
-}
-
-func _CryptoWallet_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegisterRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CryptoWalletServer).Register(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CryptoWallet_Register_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CryptoWalletServer).Register(ctx, req.(*RegisterRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CryptoWallet_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CryptoWalletServer).Login(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CryptoWallet_Login_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CryptoWalletServer).Login(ctx, req.(*LoginRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _CryptoWallet_CreateWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -232,14 +166,6 @@ var CryptoWallet_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "crypto_wallet.CryptoWallet",
 	HandlerType: (*CryptoWalletServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Register",
-			Handler:    _CryptoWallet_Register_Handler,
-		},
-		{
-			MethodName: "Login",
-			Handler:    _CryptoWallet_Login_Handler,
-		},
 		{
 			MethodName: "CreateWallet",
 			Handler:    _CryptoWallet_CreateWallet_Handler,

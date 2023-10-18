@@ -19,7 +19,6 @@ type Container struct {
 	redis    service.Cache
 
 	// repo
-	userRepo           repository.User
 	walletRepo         repository.Wallet
 	transactionBtcRepo repository.Transaction
 	transactionEthRepo repository.Transaction
@@ -76,14 +75,6 @@ func (c *Container) Tron() service.Tron {
 
 func (c *Container) SetTron(tron service.Tron) {
 	c.tron = tron
-}
-
-func (c *Container) UserRepo() repository.User {
-	return c.userRepo
-}
-
-func (c *Container) SetUserRepo(userRepo repository.User) {
-	c.userRepo = userRepo
 }
 
 func (c *Container) WalletRepo() repository.Wallet {

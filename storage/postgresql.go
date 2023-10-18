@@ -118,7 +118,10 @@ func CloseDB(db *gorm.DB) error {
 
 func TruncateNonRefTables(db *gorm.DB) error {
 	models := []interface{}{
-		gormrepo.User{},
+		gormrepo.BtcTransactionRepo{},
+		gormrepo.EthTransactionRepo{},
+		gormrepo.TrxTransactionRepo{},
+		gormrepo.WalletRepo{},
 	}
 	for _, v := range models {
 		err := db.Statement.Parse(v)

@@ -21,9 +21,7 @@ import (
 
 // CustomResponse encapsulates all possible response types.
 type CustomResponse struct {
-	LoginResponse    *cegrpc.LoginResponse
-	RegisterResponse *cegrpc.RegisterResponse
-	SendResponse     *cegrpc.SendResponse
+	SendResponse *cegrpc.SendResponse
 }
 
 func SetupGRPCConn(t *testing.T, ctx context.Context, cb func(appContainer *container.Container) *container.Container) (*grpc.ClientConn, func()) {
@@ -47,7 +45,6 @@ func SetupGRPCConn(t *testing.T, ctx context.Context, cb func(appContainer *cont
 	)
 
 	controllers := &grpccontroller.Controllers{
-		User:        *handler.NewUserHandler(appContainer),
 		Wallet:      *handler.NewWalletHandler(appContainer),
 		Transaction: *handler.NewTransactionHandler(appContainer),
 		Watcher:     *handler.NewWatcherHandler(appContainer),
@@ -84,18 +81,6 @@ func SetupGRPCConn(t *testing.T, ctx context.Context, cb func(appContainer *cont
 
 func performGRPCRequest(ctx context.Context, client cegrpc.CryptoWalletClient, method string, requestMessage interface{}) (*CustomResponse, error) {
 	switch method {
-	case "Login":
-		response, err := client.Login(ctx, requestMessage.(*cegrpc.LoginRequest))
-		if err != nil {
-			return nil, err
-		}
-		return &CustomResponse{LoginResponse: response}, nil
-	case "Register":
-		response, err := client.Register(ctx, requestMessage.(*cegrpc.RegisterRequest))
-		if err != nil {
-			return nil, err
-		}
-		return &CustomResponse{RegisterResponse: response}, nil
 	case "SendToken":
 		response, err := client.SendToken(ctx, requestMessage.(*cegrpc.SendRequest))
 		if err != nil {

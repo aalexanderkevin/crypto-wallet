@@ -111,7 +111,7 @@ func (w *WalletRepo) Add(ctx context.Context, wallet *model.Wallet, encryptionKe
 }
 
 func (w *WalletRepo) Get(ctx context.Context, filter *repository.WalletGetFilter, encryptionKey *string) (*model.Wallet, error) {
-	user := Wallet{
+	wallet := Wallet{
 		Id:    filter.Id,
 		Email: filter.Email,
 	}
@@ -124,7 +124,7 @@ func (w *WalletRepo) Get(ctx context.Context, filter *repository.WalletGetFilter
 		q = q.Where("email = ?", filter.Email)
 	}
 
-	err := q.First(&user).Error
+	err := q.First(&wallet).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, model.NewNotFoundError()
@@ -132,7 +132,7 @@ func (w *WalletRepo) Get(ctx context.Context, filter *repository.WalletGetFilter
 		return nil, err
 	}
 
-	return user.ToModel(encryptionKey)
+	return wallet.ToModel(encryptionKey)
 }
 
 func (w *WalletRepo) Update(ctx context.Context, id string, wallet *model.Wallet) (*model.Wallet, error) {

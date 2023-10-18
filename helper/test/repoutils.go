@@ -17,35 +17,6 @@ import (
 	"gorm.io/gorm"
 )
 
-func FakeUser(t *testing.T, cb func(user model.User) model.User) model.User {
-	t.Helper()
-
-	fakeRp := model.User{
-		Id:           helper.Pointer(fake.CharactersN(7)),
-		Username:     helper.Pointer(fake.Word()),
-		Email:        helper.Pointer(fake.EmailAddress()),
-		FullName:     helper.Pointer(fake.FullName()),
-		Password:     helper.Pointer(fake.CharactersN(10)),
-		PasswordSalt: helper.Pointer(fake.CharactersN(7)),
-	}
-	if cb != nil {
-		fakeRp = cb(fakeRp)
-	}
-	return fakeRp
-}
-
-func FakeUserCreate(t *testing.T, db *gorm.DB, callback func(user model.User) model.User) *model.User {
-	t.Helper()
-
-	fakeData := FakeUser(t, callback)
-
-	repo := gormrepo.NewUserRepository(db)
-	user, err := repo.Add(context.TODO(), &fakeData)
-	require.NoError(t, err)
-
-	return user
-}
-
 func FakeWallet(t *testing.T, cb func(wallet model.Wallet) model.Wallet) model.Wallet {
 	t.Helper()
 
@@ -71,10 +42,10 @@ func FakeWalletCreate(t *testing.T, db *gorm.DB, callback func(wallet model.Wall
 	fakeData := FakeWallet(t, callback)
 
 	repo := gormrepo.NewWalletRepository(db)
-	user, err := repo.Add(context.TODO(), &fakeData, &cfg.Service.SeedPhraseEncryptionKey)
+	res, err := repo.Add(context.TODO(), &fakeData, &cfg.Service.SeedPhraseEncryptionKey)
 	require.NoError(t, err)
 
-	return user
+	return res
 }
 
 func FakeTransaction(t *testing.T, cb func(transaction model.Transaction) model.Transaction) model.Transaction {
@@ -103,21 +74,15 @@ func FakeBtcTransactionCreate(t *testing.T, db *gorm.DB, callback func(transacti
 	fakeData := FakeTransaction(t, callback)
 
 	repo := gormrepo.NewBtcTransactionRepository(db)
-	user, err := repo.Upsert(context.TODO(), &fakeData)
+	res, err := repo.Upsert(context.TODO(), &fakeData)
 	require.NoError(t, err)
 
-	return user
+	return res
 }
 
-func FakeJwtToken(t *testing.T, data *model.User) (string, model.User) {
+func FakeJwtToken(t *testing.T, data *string) (string, string) {
 	if data == nil {
-		fakeUser := FakeUser(t, func(user model.User) model.User {
-			user.Email = helper.Pointer("email@gmail.com")
-			user.Password = nil
-			user.PasswordSalt = nil
-			return user
-		})
-		data = &fakeUser
+		data = helper.Pointer("email@gmail.com")
 	}
 
 	jwtClaims := middleware.JWTData{
